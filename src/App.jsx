@@ -4,6 +4,7 @@ import Webcam from "react-webcam";
 import { useEffect, useRef, useState, useCallback, useMemo } from "react";
 
 function App() {
+  // setup camera
   const videoOption = useMemo(
     () => ({
       width: 480,
@@ -13,13 +14,14 @@ function App() {
     []
   );
 
-  const [dataset, setDataset] = useState(null);
-  const [detections, setDetections] = useState([]);
+  const [dataset, setDataset] = useState(null); //state untuk menyimpan model
+  const [detections, setDetections] = useState([]); //state untuk menyimpan deteksi
 
-  const webcamRef = useRef(null);
-  const canvasRef = useRef(null);
-  const detectIntervalRef = useRef(null);
+  const webcamRef = useRef(null); //ref untuk webcam
+  const canvasRef = useRef(null); //ref untuk canvas
+  const detectIntervalRef = useRef(null); //ref untuk interval
 
+  // load model
   const loadModel = useCallback(async () => {
     try {
       const model = await cocoModel.load();
@@ -35,7 +37,7 @@ function App() {
       const ctx = canvas.getContext("2d");
       ctx.clearRect(0, 0, ctx.canvas.width, ctx.canvas.height);
 
-      // Set canvas dimensions to match video
+      // Set dimensi canvas ke ukuran video
       canvas.width = canvasWidth;
       canvas.height = canvasHeight;
 
@@ -75,6 +77,7 @@ function App() {
     }
   }, [dataset, drawBoundingBoxes]);
 
+  // use effect untuk load data ketika halaman pertama kali dibuka
   useEffect(() => {
     tf.ready().then(() => {
       loadModel();
@@ -100,20 +103,22 @@ function App() {
 
   return (
     <>
-      <nav className="w-full fixed bg-white flex justify-around items-center p-4">
-        <h1 className="font-semibold text-xl">Halo</h1>
+      <nav className="fixed flex items-center justify-around w-full p-4 bg-white">
+        <h1 className="text-xl font-semibold">
+          <a href="/">Object Detection</a>
+        </h1>
         <ul className="flex space-x-4">
           <li>
-            <a href="#">About</a>
+            <a href="/">About</a>
           </li>
           <li>
-            <a href="/chat">ChatBot</a>
+            <a href="/chatbot">ChatBot</a>
           </li>
         </ul>
       </nav>
-      <div className="w-full h-screen bg-black text-white flex justify-center items-center">
-        <div className="flex w-full justify-center items-center flex-col font-bold gap-y-6">
-          <h1>Machine Learning by TensorFlow</h1>
+      <div className="flex items-center justify-center w-full h-screen text-white bg-black">
+        <div className="flex flex-col items-center justify-center w-full font-bold gap-y-6">
+          <h1>Machine Learning Object Detection</h1>
           <div
             style={{
               position: "relative",
@@ -131,6 +136,7 @@ function App() {
                 height: "100%",
                 objectFit: "cover",
               }}
+              className="sm:transform-none"
             />
             <canvas
               ref={canvasRef}
